@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity.SqlServer;
+using System.Net.Http;
 using Microsoft.Owin.Hosting;
 
 namespace DotNetBay.SelfHost
@@ -13,14 +14,23 @@ namespace DotNetBay.SelfHost
 
         static void Main(string[] args)
         {
-            var binding = "http://localhost:1901/";
+            var binding = "http://localhost:8080/";
 
             WebApp.Start<Startup>(binding);
 
             Console.WriteLine($"Webserver is running on {binding}");
             Console.WriteLine("");
 
-            Console.Write("Press Enter to quit.");
+            // Create HttpCient and make a request to api/values 
+            HttpClient client = new HttpClient();
+
+            var response = client.GetAsync(binding + "api/status").Result;
+
+            Console.WriteLine(response);
+            Console.WriteLine(response.Content.ReadAsStringAsync().Result);
+
+
+            Console.WriteLine("Press Enter to quit.");
             Console.ReadLine();
         }
     }
