@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using DotNetBay.Core;
 using DotNetBay.Data.EF;
 using DotNetBay.Data.Entity;
+using DotNetBay.Interfaces;
 using DotNetBay.WebApp.ViewModel;
 
 namespace DotNetBay.WebApp.Controllers
@@ -10,13 +11,13 @@ namespace DotNetBay.WebApp.Controllers
     public class AuctionsController : Controller
     {
         private readonly IAuctionService service;
-        private EFMainRepository mainRepository;
+        private IMainRepository mainRepository;
 
-        public AuctionsController()
+        public AuctionsController(IMainRepository mainRepository, IAuctionService service)
         {
-            this.mainRepository = new EFMainRepository();
+            this.mainRepository = mainRepository;
 
-            this.service = new AuctionService(this.mainRepository, new SimpleMemberService(this.mainRepository));
+            this.service = service;
 
         }
 

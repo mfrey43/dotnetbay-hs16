@@ -11,14 +11,11 @@ namespace DotNetBay.WPF.View
     /// </summary>
     public partial class BidView : Window
     {
-        public BidView(Auction selectedAuction)
+        public BidView(Auction selectedAuction, IMemberService memberService, IAuctionService auctionService)
         {
             this.InitializeComponent();
 
             var app = Application.Current as App;
-
-            var memberService = new SimpleMemberService(app.MainRepository);
-            var auctionService = new AuctionService(app.MainRepository, memberService);
 
             this.DataContext = new BidViewModel(selectedAuction, memberService, auctionService);
 

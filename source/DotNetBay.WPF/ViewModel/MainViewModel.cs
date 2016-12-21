@@ -5,6 +5,7 @@ using DotNetBay.Core;
 using DotNetBay.Core.Execution;
 using DotNetBay.Data.Entity;
 using DotNetBay.WPF.View;
+using Microsoft.Practices.Unity;
 
 namespace DotNetBay.WPF.ViewModel
 {
@@ -16,8 +17,12 @@ namespace DotNetBay.WPF.ViewModel
 
         private ObservableCollection<AuctionViewModel> auctions = new ObservableCollection<AuctionViewModel>();
 
-        public MainViewModel(IAuctioneer auctioneer, IAuctionService auctionService)
+        private readonly IUnityContainer _container;
+
+        public MainViewModel(IUnityContainer container, IAuctioneer auctioneer, IAuctionService auctionService)
         {
+            _container = container;
+
             this.auctioneer = auctioneer;
             this.auctionService = auctionService;
 
@@ -33,7 +38,7 @@ namespace DotNetBay.WPF.ViewModel
             var allAuctions = this.auctionService.GetAll();
             foreach (var auction in allAuctions)
             {
-                var auctionVm = new AuctionViewModel(auction);
+                var auctionVm = _container.Resolve<AuctionViewModel>(new ParameterOverride("auction", auction));
                 this.auctions.Add(auctionVm);
             }
         }
@@ -50,7 +55,7 @@ namespace DotNetBay.WPF.ViewModel
 
         private void AddNewAuctionAction()
         {
-            var sellView = new SellView();
+            var sellView = _container.Resolve<SellView>();
             sellView.ShowDialog(); // Blocking
 
             // Find & add new auction
@@ -59,7 +64,7 @@ namespace DotNetBay.WPF.ViewModel
 
             foreach (var auction in newAuctions)
             {
-                var auctionVm = new AuctionViewModel(auction);
+                var auctionVm = _container.Resolve<AuctionViewModel>(new ParameterOverride("auction", auction));
                 this.auctions.Add(auctionVm);
             }
         }

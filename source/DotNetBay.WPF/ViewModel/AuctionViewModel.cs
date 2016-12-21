@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using DotNetBay.Data.Entity;
 using DotNetBay.WPF.View;
+using Microsoft.Practices.Unity;
 
 namespace DotNetBay.WPF.ViewModel
 {
@@ -25,8 +26,12 @@ namespace DotNetBay.WPF.ViewModel
 
         private bool isRunning;
 
-        public AuctionViewModel(Auction auction)
+        private readonly IUnityContainer _container;
+
+        public AuctionViewModel(IUnityContainer container, Auction auction)
         {
+            _container = container;
+
             this.auction = auction;
 
             this.AddBidCommand = new RelayCommand(this.AddBidAction);
@@ -164,7 +169,7 @@ namespace DotNetBay.WPF.ViewModel
 
         private void AddBidAction()
         {
-            var view = new BidView(this.auction);
+            var view = _container.Resolve<BidView>(new ParameterOverride("selectedAuction", auction));
             view.Show();
         }
 

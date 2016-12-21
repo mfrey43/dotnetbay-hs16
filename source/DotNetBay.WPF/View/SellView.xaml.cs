@@ -16,16 +16,13 @@ namespace DotNetBay.WPF.View
     public partial class SellView : Window
     {
 
-        public SellView()
+        public SellView(IMemberService memberService, IAuctionService auctionService)
         {
-            this.InitializeComponent();
-
+            InitializeComponent();
 
             var app = Application.Current as App;
 
-            var memberService = new SimpleMemberService(app.MainRepository);
-            var auctionService = new AuctionService(app.MainRepository, memberService);
-            this.DataContext = new SellViewModel(memberService, auctionService);
+            DataContext = new SellViewModel(memberService, auctionService);
         }
     }
 

@@ -4,8 +4,11 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using DotNetBay.Core;
 using DotNetBay.Core.Execution;
+using DotNetBay.Data.EF;
 using DotNetBay.Data.Entity;
+using DotNetBay.Interfaces;
 using DotNetBay.WPF.ViewModel;
+using Microsoft.Practices.Unity;
 
 namespace DotNetBay.WPF.View
 {
@@ -16,15 +19,15 @@ namespace DotNetBay.WPF.View
     {
         public MainWindow()
         {
-            var app = Application.Current as App;
-
             InitializeComponent();
 
-            var memberService = new SimpleMemberService(app.MainRepository);
-            var auctionService = new AuctionService(app.MainRepository, new SimpleMemberService(app.MainRepository));
+            var container = new UnityContainer();
+            container.RegisterType<IMemberService, SimpleMemberService>();
+            container.RegisterType<IAuctioneer, Auctioneer>();
+            container.RegisterType<IAuctionService, AuctionService>();
+            container.RegisterType<IMainRepository, EFMainRepository>();
 
-            this.DataContext = new MainViewModel(app.AuctionRunner.Auctioneer, auctionService);
-
+            DataContext = container.Resolve<MainViewModel>();
         }
     }
 }
